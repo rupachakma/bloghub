@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row p-5">
+        {% for post in posts %}
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Featured Post Image" class="card-img-top" style="width: 400px; height: 300px;">
+                    {% else %}
+                        <p>No Images to show</p>
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title">{{ post.title }}</h2>
+                        <p class="meta">Posted on {{ post.created_at|date:"F j, Y" }}</p>
+                        <p class="card-text">{{ post.description|truncatechars:200 }}</p>
+                        <a href="{% url 'postdetails' id=post.id %}" class="read-more">Read More</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+        
+    
+{% endblock content %}
+

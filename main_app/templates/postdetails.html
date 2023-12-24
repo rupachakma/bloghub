@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-4">
+    <div class="row p-5">
+      <div class="col-md-8 offset-md-2">
+        <div class="card">
+          {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post Image" class="card-img-top">
+          {% else %}
+            <p class="text-center mt-3">No Images to show</p>
+          {% endif %}
+          <div class="card-body">
+            <h2 class="card-title mb-4">{{ post.title }}</h2>
+            <p class="card-text text-justify">{{ post.description|linebreaks }}</p>
+
+            <div class="mt-4">
+              <a href="{% url 'postlist' %}" class="btn btn-info">Back to Posts</a>
+
+              {% if user.is_authenticated and user.user_type == 'blogger' %}
+                <a href="{% url 'delete' id=post.id %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'update' id=post.id %}" class="btn btn-warning">Edit</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

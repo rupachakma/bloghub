@@ -1,0 +1,17 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="container  p-5">
+    <div class=" mx-auto col-12 shadow">
+        <h2 class="alert alert-success text-center">Update Your Post</h2>
+        <div class="p-5">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token%}
+    
+                {{form.as_p}}
+                <button class="btn btn-success mt-2">Update</button>
+                <button class="btn btn-danger mt-2">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

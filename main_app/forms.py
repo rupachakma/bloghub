@@ -1,6 +1,6 @@
 from django import forms 
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,UsernameField
-from main_app.models import Blogger_Profile, Blogpost, CustomUser
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,UsernameField,UserChangeForm
+from main_app.models import Blogger_Profile, Blogpost, CustomUser, Viewer_Profile
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(label="Username",widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -44,4 +44,33 @@ class BloggerProfileForm(forms.ModelForm):
             
             'bio':forms.Textarea(attrs={'class':'form-control'}), 
             'profilepic': forms.FileInput(attrs={'class': 'form-control-file'}),
+        }
+
+class ViewerProfileForm(forms.ModelForm):
+    class Meta:
+        model = Viewer_Profile
+        fields = ['bio','profilepic']
+        labels = {'bio':'Bio','profilepic':'Profile Image'}
+        widgets = {
+            
+            'bio':forms.Textarea(attrs={'class':'form-control'}), 
+            'profilepic': forms.FileInput(attrs={'class': 'form-control-file'}),
+        }
+
+class UserProfileUpdateForm(forms.ModelForm):
+    user_type = forms.ChoiceField(
+        label='Join as a:',
+        choices=[('', '-------'), ('blogger', 'Bloggers'), ('viewer', 'Viewers')],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'user_type']
+        labels = {'first_name': 'First Name', 'last_name': 'Last Name', 'email': 'Email'}
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }

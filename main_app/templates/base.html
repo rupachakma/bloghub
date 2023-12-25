@@ -20,11 +20,15 @@
               <li class="nav-item">
                 <a class="nav-link text-white" href="{% url 'create_post' %}">Create post</a>
               </li>
-              {% endif %}
-           
               <li class="nav-item">
-                <a class="nav-link text-white" href="{% url 'profile' %}">Dashboard</a>
+                <a class="nav-link text-white" href="{% url 'profile_view' %}">Dashboard</a>
               </li>
+              {% endif %}
+              {% if user.user_type == 'viewer' %}
+              <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'viewer_profile_view' %}">Dashboard</a>
+              </li>
+              {% endif %}
               <li class="nav-item">
                 <a class="nav-link text-white" href="{% url 'logout' %}">Logout</a>
               </li>

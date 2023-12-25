@@ -8,14 +8,19 @@
           <div class="card-header">
             <h2>Welcome, {{ user.username }}!</h2>
           </div>
+          {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+            {% endfor %}
           <div class="card-body">
             <h3>Your Profile</h3>
-            <li class="list-group-item"><strong>Username:</strong> {{ user.username }}</li>
-            <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
-            <li class="list-group-item"><strong>First Name:</strong> {{ user.first_name }}</li>
-            <li class="list-group-item"><strong>Last Name:</strong> {{ user.last_name }}</li>
-            <li class="list-group-item"><strong>Bio:</strong> {{ user.bio }}</li>
-            <li class="list-group-item"><strong>Address:</strong> {{ user.address }}</li>
+            <li class="list-group-item" style="line-height: 2;"><strong>Username:</strong> {{ user.username }}</li>
+            <li class="list-group-item" style="line-height: 2;"><strong>Email:</strong> {{ user.email }}</li>
+            <li class="list-group-item" style="line-height: 2;"><strong>First Name:</strong> {{ user.first_name }}</li>
+            <li class="list-group-item" style="line-height: 2;"><strong>Last Name:</strong> {{ user.last_name }}</li>
+            <li class="list-group-item" style="line-height: 2;"><strong>Bio:</strong> {{ blogger_profile.bio }}</li>
+            
           </ul>
           <a href="{% url 'update_blogger_profile'%}" class="btn btn-primary mt-3">Edit Profile</a>
           </div>
@@ -28,7 +33,7 @@
             <h3>Profile Picture</h3>
           </div>
           <div class="card-body text-center">
-            <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle">
+            <img src="{{ blogger_profile.profilepic.url }}" alt="Profile Picture" class="img-fluid">
           </div>
         </div>
       </div>

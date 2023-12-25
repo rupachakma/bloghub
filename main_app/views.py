@@ -1,10 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate,login,logout
-from main_app.forms import BloggerProfileForm, LoginForm, PostForm, RegisterForm
+from main_app.forms import BloggerProfileForm, LoginForm, PostForm,RegisterForm, UserProfileUpdateForm, ViewerProfileForm
 from django.contrib.auth.decorators import login_required
-
-from main_app.models import Blogpost
+from main_app.models import Blogpost, Viewer_Profile
 
 # Create your views here.
 def register(request):
@@ -111,16 +110,71 @@ def update_post(request, id):
     else:
         return redirect('postlist')
     
+
 @login_required
 def update_blogger_profile(request):
-    blogger_profile = request.user.user_profile
-    if request.method == 'POST':
-        form = BloggerProfileForm(request.POST, request.FILES, instance=blogger_profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile') 
-    else:
-        form = BloggerProfileForm(instance=blogger_profile)
+        user = request.user
+        blogger_profile = user.blogger_profile
 
-    return render(request, 'bloggers/profile.html', {'form': form})
-   
+        if request.method == 'POST':
+            user_form = UserProfileUpdateForm(request.POST, instance=user)
+            blogger_profile_form = BloggerProfileForm(request.POST, request.FILES, instance=blogger_profile)
+
+            if user_form.is_valid() and blogger_profile_form.is_valid():
+                user_form.save()
+                blogger_profile_form.save()
+
+                # Redirect to the updated profile or another page
+                return redirect('profile_view')
+        else:
+            user_form = UserProfileUpdateForm(instance=user)
+            blogger_profile_form = BloggerProfileForm(instance=blogger_profile)
+
+        return render(request, 'bloggers/update_profile.html', {'user_form': user_form, 'blogger_profile_form': blogger_profile_form})
+
+def profile_view(request):
+    user = request.user
+    blogger_profile = user.blogger_profile
+
+    context = {
+        'user': user,
+        'blogger_profile': blogger_profile,
+    }
+
+    return render(request, 'bloggers/profile.html', context)
+
+@login_required
+def update_viewer_profile(request):
+    user = request.user
+
+    if hasattr(user, 'viewer_profile'):
+        viewer_profile = user.viewer_profile
+    else:
+        viewer_profile = Viewer_Profile(user_profile=user)
+        viewer_profile.save()
+
+    if request.method == 'POST':
+        user_form = UserProfileUpdateForm(request.POST, instance=user)
+        viewer_profile_form = ViewerProfileForm(request.POST, request.FILES, instance=viewer_profile)
+
+        if user_form.is_valid() and viewer_profile_form.is_valid():
+            user_form.save()
+            viewer_profile_form.save()
+
+            return redirect('viewer_profile_view')
+    else:
+        user_form = UserProfileUpdateForm(instance=user)
+        viewer_profile_form = ViewerProfileForm(instance=viewer_profile)
+
+    return render(request, 'viewers/update_profile.html', {'user_form': user_form, 'viewer_profile_form': viewer_profile_form})
+
+def viewer_profile_view(request):
+    user = request.user
+    viewer_profile = user.viewer_profile
+
+    context = {
+        'user': user,
+        'viewer_profile': viewer_profile,
+    }
+
+    return render(request, 'viewers/profile.html', context)

@@ -1,6 +1,6 @@
 from django import forms 
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,UsernameField,UserChangeForm
-from main_app.models import Blogger_Profile, Blogpost, CustomUser, Viewer_Profile
+from main_app.models import Blogpost, CustomUser, Profile
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(label="Username",widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -35,24 +35,13 @@ class PostForm(forms.ModelForm):
         }
 
 
-class BloggerProfileForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = Blogger_Profile
-        fields = ['bio','profilepic']
-        labels = {'bio':'Bio','profilepic':'Profile Image'}
+        model = Profile
+        fields = ['address','bio','profilepic']
+        labels = {'address':'Address','bio':'Bio','profilepic':'Profile Image'}
         widgets = {
-            
-            'bio':forms.Textarea(attrs={'class':'form-control'}), 
-            'profilepic': forms.FileInput(attrs={'class': 'form-control-file'}),
-        }
-
-class ViewerProfileForm(forms.ModelForm):
-    class Meta:
-        model = Viewer_Profile
-        fields = ['bio','profilepic']
-        labels = {'bio':'Bio','profilepic':'Profile Image'}
-        widgets = {
-            
+            'address':forms.Textarea(attrs={'class':'form-control'}), 
             'bio':forms.Textarea(attrs={'class':'form-control'}), 
             'profilepic': forms.FileInput(attrs={'class': 'form-control-file'}),
         }

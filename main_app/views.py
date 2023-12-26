@@ -1,9 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate,login,logout
-from main_app.forms import BloggerProfileForm, LoginForm, PostForm,RegisterForm, UserProfileUpdateForm, ViewerProfileForm
+from main_app.forms import LoginForm, PostForm, ProfileForm,RegisterForm, UserProfileUpdateForm
 from django.contrib.auth.decorators import login_required
-from main_app.models import Blogpost, Viewer_Profile
+from main_app.models import Blogpost, Profile
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 def register(request):
@@ -113,68 +114,74 @@ def update_post(request, id):
 
 @login_required
 def update_blogger_profile(request):
-        user = request.user
-        blogger_profile = user.blogger_profile
 
-        if request.method == 'POST':
-            user_form = UserProfileUpdateForm(request.POST, instance=user)
-            blogger_profile_form = BloggerProfileForm(request.POST, request.FILES, instance=blogger_profile)
-
-            if user_form.is_valid() and blogger_profile_form.is_valid():
-                user_form.save()
-                blogger_profile_form.save()
-
-                # Redirect to the updated profile or another page
-                return redirect('profile_view')
-        else:
-            user_form = UserProfileUpdateForm(instance=user)
-            blogger_profile_form = BloggerProfileForm(instance=blogger_profile)
-
-        return render(request, 'bloggers/update_profile.html', {'user_form': user_form, 'blogger_profile_form': blogger_profile_form})
-
-def profile_view(request):
     user = request.user
-    blogger_profile = user.blogger_profile
+
+    # Simplified get_or_create
+    blogger_profile, created = Profile.objects.get_or_create(user_profile=user)
+    
+    if request.method == 'POST':
+        user_form = UserProfileUpdateForm(request.POST, instance=user)
+        blogger_profile_form = ProfileForm(request.POST, request.FILES, instance=blogger_profile)
+            
+        if user_form.is_valid() and blogger_profile_form.is_valid():
+            user_form.save()
+            blogger_profile_form.save()
+            return redirect('blogger_profile_view')
+    else:
+        user_form = UserProfileUpdateForm(instance=user)
+        blogger_profile_form = ProfileForm(instance=blogger_profile)
+
+    return render(request, 'bloggers/update_profile.html', {'user_form': user_form, 'blogger_profile_form': blogger_profile_form})
+@login_required
+def blogger_profile_view(request):
+    user = request.user
+
+    try:
+        user_profile = user.profile
+    except Profile.DoesNotExist:
+        user_profile = None
 
     context = {
         'user': user,
-        'blogger_profile': blogger_profile,
+        'user_profile': user_profile,
     }
 
     return render(request, 'bloggers/profile.html', context)
+  
 
 @login_required
 def update_viewer_profile(request):
     user = request.user
 
-    if hasattr(user, 'viewer_profile'):
-        viewer_profile = user.viewer_profile
-    else:
-        viewer_profile = Viewer_Profile(user_profile=user)
-        viewer_profile.save()
+    # Simplified get_or_create
+    viewer_profile, created = Profile.objects.get_or_create(user_profile=user)
 
     if request.method == 'POST':
         user_form = UserProfileUpdateForm(request.POST, instance=user)
-        viewer_profile_form = ViewerProfileForm(request.POST, request.FILES, instance=viewer_profile)
+        viewer_profile_form = ProfileForm(request.POST, request.FILES, instance=viewer_profile)
 
         if user_form.is_valid() and viewer_profile_form.is_valid():
             user_form.save()
             viewer_profile_form.save()
-
             return redirect('viewer_profile_view')
     else:
         user_form = UserProfileUpdateForm(instance=user)
-        viewer_profile_form = ViewerProfileForm(instance=viewer_profile)
+        viewer_profile_form = ProfileForm(instance=viewer_profile)
 
     return render(request, 'viewers/update_profile.html', {'user_form': user_form, 'viewer_profile_form': viewer_profile_form})
 
 def viewer_profile_view(request):
     user = request.user
-    viewer_profile = user.viewer_profile
+
+    try:
+        user_profile = user.profile
+    except Profile.DoesNotExist:
+        user_profile = None
 
     context = {
         'user': user,
-        'viewer_profile': viewer_profile,
+        'user_profile': user_profile,
     }
 
     return render(request, 'viewers/profile.html', context)

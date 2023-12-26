@@ -7,22 +7,17 @@ class CustomUser(AbstractUser):
 
 class Blogpost(models.Model):
     blogger = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=200)
     description = models.TextField()
+    create_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to="image",blank=True,null=True)
 
-class Blogger_Profile(models.Model):
+class Profile(models.Model):
     user_profile = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     profilepic = models.ImageField(upload_to="image",blank=True,null=True)
     bio = models.TextField(blank=True)
-    
+    address = models.TextField()
+
     def __str__(self):
         return self.user_profile.username
     
-class Viewer_Profile(models.Model):
-    user_profile = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    profilepic = models.ImageField(upload_to="image",blank=True,null=True)
-    bio = models.TextField(blank=True)
-    
-    def __str__(self):
-        return self.user_profile.username

@@ -1,27 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <div class="row p-5">
-        {% for post in posts %}
-            <div class="col-lg-4 mb-4">
-                <div class="card border-0" style="background-color: #ebfafa;">
-                    {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="Featured Post Image" class="card-img-top" style="width: 383px; height: 300px;">
-                    {% else %}
-                        <p>No Images to show</p>
-                    {% endif %}
-                    <div class="card-body">
-                        <h2 class="card-title">{{ post.title }}</h2>
-                        <p class="meta">Posted on {{ post.created_at|date:"F j, Y" }}</p>
-                        <p class="card-text">{{ post.description|truncatechars:200 }}</p>
-                        <a href="{% url 'postdetails' id=post.id %}" class="btn btn-success" >Read More</a>
-                    </div>
+
+<div class="row p-5">
+    {% for post in posts %}
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0" style="background-color: #ebfafa; height: 100%; width: 400px;" >
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Featured Post Image" class="card-img-top" style="width: 400px; height: 300px;">
+                {% else %}
+                    <p>No Images to show</p>
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ post.title }}</h2>
+                    <img src="{{ post.blogger.profile.profilepic.url }}" alt="{{ post.blogger.username }}'s Profile Picture" style="width: 50px; height:50px; border-radius: 50%; object-fit: cover;">
+                    <small class="meta">Published on {{ post.create_at|date:"F j, Y" }} by {{ post.blogger.username }}</small>
+                    <p class="card-text">{{ post.description|truncatechars:200 }}</p>
+                    <a href="{% url 'postdetails' id=post.id %}" class="btn btn-success" >Read More</a>
                 </div>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
 </div>
-        
-    
+   
 {% endblock content %}
 
